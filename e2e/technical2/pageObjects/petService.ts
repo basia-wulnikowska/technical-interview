@@ -1,5 +1,5 @@
-import { expect, type APIRequestContext } from '@playwright/test';
-import { PETSTORE_BASE_URL } from '../utils/constants';
+import type { APIRequestContext } from '@playwright/test';
+import { parseOkJson } from '../utils/http';
 
 export type PetStatus = 'available' | 'pending' | 'sold';
 
@@ -18,23 +18,12 @@ export type PetSummary = {
 export class PetService {
   constructor(private readonly request: APIRequestContext) {}
 
-  async getPetById(petId: number) {
-    const response = await this.request.get(`${PETSTORE_BASE_URL}/pet/${petId}`);
+  async findPetsByStatus(status: PetStatus): Promise<Pet[]> {
+    const response = await this.request.get('pet/findByStatus', {
+      params: { status },
+    });
 
-    await expect(response).toBeOK();
-    return response.json() as Promise<Pet>;
-  }
-
-  async findPetsByStatus(status: PetStatus) {
-    const response = await this.request.get(
-      `${PETSTORE_BASE_URL}/pet/findByStatus`,
-      {
-        params: { status },
-      },
-    );
-
-    await expect(response).toBeOK();
-    return response.json() as Promise<Pet[]>;
+    return parseOkJson<Pet[]>(response);
   }
 
   listSoldPetSummaries(pets: Pet[]): PetSummary[] {

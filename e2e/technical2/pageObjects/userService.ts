@@ -1,5 +1,6 @@
-import { expect, type APIRequestContext } from '@playwright/test';
-import { PETSTORE_BASE_URL } from '../utils/constants';
+import type { APIRequestContext } from '@playwright/test';
+import type { ApiMessageResponse } from '../utils/apiTypes';
+import { parseOkJson } from '../utils/http';
 
 export type User = {
   id?: number;
@@ -15,21 +16,28 @@ export type User = {
 export class UserService {
   constructor(private readonly request: APIRequestContext) {}
 
-  async createUser(user: User) {
-    const response = await this.request.post(`${PETSTORE_BASE_URL}/user`, {
+  async createUser(user: User): Promise<ApiMessageResponse> {
+    const response = await this.request.post('user', {
       data: user,
     });
 
-    await expect(response).toBeOK();
-    return response.json() as Promise<{ code: number; type: string; message: string }>;
+    return parseOkJson<ApiMessageResponse>(response);
   }
 
-  async getUserByUsername(username: string) {
-    const response = await this.request.get(
-      `${PETSTORE_BASE_URL}/user/${username}`,
-    );
+  async getUserByUsername(username: string): Promise<User> {
+    const response = await this.request.get(`user/${username}`);
 
-    await expect(response).toBeOK();
-    return response.json() as Promise<User>;
+    return parseOkJson<User>(response);
+  }
+
+  async deleteUser(username: string): Promise<void> {
+    const response = await this.request.delete(`user/${username}`);
+
+    if (response.status() !== 404 && !response.ok()) {
+      const body = await response.text();
+      throw new Error(
+        `HTTP ${response.status()} ${response.statusText()}: ${body}`,
+      );
+    }
   }
 }

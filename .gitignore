@@ -3,6 +3,11 @@
 node_modules/
 /test-results/
 /playwright-report/
+/allure-results/
+/allure-report/
 /blob-report/
 /playwright/.cache/
-/playwright/.auth/
+/playwright/.auth/*
+!/playwright/.auth/.gitkeep
+/e2e/technical2/output/*
+!/e2e/technical2/output/.gitkeep

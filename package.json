@@ -6,17 +6,37 @@
   "directories": {
     "test": "tests"
   },
-  "scripts": {},
+  "scripts": {
+    "test": "npm run test:local",
+    "test:google": "playwright test --grep @google --project=local-ui",
+    "test:local": "rm -rf allure-results allure-report && playwright test --project=local-api",
+    "test:local:parallel": "rm -rf allure-results allure-report && PARALLEL_SUITES=true playwright test --project=local-ui --project=local-api-2",
+    "test:ci": "rm -rf allure-results allure-report && playwright test --project=ci-api",
+    "test:ci:parallel": "rm -rf allure-results allure-report && PARALLEL_SUITES=true playwright test --project=ci-api-2",
+    "typecheck": "tsc --noEmit",
+    "lint": "eslint .",
+    "lint:fix": "eslint . --fix",
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
+    "report:html": "playwright show-report",
+    "report:allure": "allure generate allure-results -o allure-report",
+    "report:allure:open": "allure open allure-report",
+    "report:allure:serve": "rm -rf allure-report && allure open allure-results"
+  },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "type": "commonjs",
   "devDependencies": {
     "@playwright/test": "^1.58.2",
-    "@types/node": "^25.5.0"
-  },
-  "dependencies": {
-    "playwright-extra": "^4.3.6",
-    "puppeteer-extra-plugin-stealth": "^2.11.2"
+    "@types/node": "^25.5.0",
+    "allure": "^3.10.0",
+    "allure-playwright": "^3.10.0",
+    "eslint": "^9.39.4",
+    "eslint-config-prettier": "^10.1.8",
+    "eslint-plugin-playwright": "^2.10.4",
+    "prettier": "^3.8.4",
+    "typescript": "^5.9.3",
+    "typescript-eslint": "^8.61.0"
   }
 }
