@@ -63,43 +63,43 @@ Both `technical1` and `technical2` follow the same layout: **`tests/`** for spec
 
 ### UI tests (`technical1`)
 
-| File                                             | Description                                                                                                                           |
-| ------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------- |
-| `e2e/technical1/tests/googletest.spec.ts`        | Searches Google for "Automation", opens the Wikipedia result, verifies the first automatic process year (1785), attaches a screenshot |
-| `e2e/technical1/pageObjects/googleSearchPage.ts` | Page object: language-neutral Google UI (stable IDs / `name="q"`), CAPTCHA, pagination, Wikipedia content helpers                     |
-| `e2e/technical1/utils/googleTest.ts`             | Custom fixture that injects `googleSearchPage`                                                                                        |
+| File | Description |
+|------|-------------|
+| `e2e/technical1/tests/googletest.spec.ts` | Searches Google for "Automation", opens the Wikipedia result, verifies the first automatic process year (1785), attaches a screenshot |
+| `e2e/technical1/pageObjects/googleSearchPage.ts` | Page object: language-neutral Google UI (stable IDs / `name="q"`), CAPTCHA, pagination, Wikipedia content helpers |
+| `e2e/technical1/utils/googleTest.ts` | Custom fixture that injects `googleSearchPage` |
 
 Runs in **headed Chrome** locally. Skipped automatically in CI (live Google / CAPTCHA is not suitable for pipelines).
 
 ### API tests (`technical2`)
 
-| File                                            | Description                                                                                                        |
-| ----------------------------------------------- | ------------------------------------------------------------------------------------------------------------------ |
-| `e2e/technical2/tests/petstoreFlow.spec.ts`     | One ordered flow: login check → user create/retrieve → sold pets → shared name counts (API key via project config) |
-| `e2e/technical2/tests/petstoreNegative.spec.ts` | Negative / edge cases: 404 user, invalid pet status, inventory without / wrong api key                             |
-| `e2e/technical2/utils/apiTest.ts`               | API test entrypoint; `api_key` header set on `local-api` / `ci-api` projects                                       |
-| `e2e/technical2/utils/http.ts`                  | Shared HTTP helper (`parseOkJson`) — services throw on non-OK responses; specs assert business rules               |
+| File | Description |
+|------|-------------|
+| `e2e/technical2/tests/petstoreFlow.spec.ts` | One ordered flow: login check → user create/retrieve → sold pets → shared name counts (API key via project config) |
+| `e2e/technical2/tests/petstoreNegative.spec.ts` | Negative / edge cases: 404 user, invalid pet status, inventory without / wrong api key |
+| `e2e/technical2/utils/apiTest.ts` | API test entrypoint; `api_key` header set on `local-api` / `ci-api` projects |
+| `e2e/technical2/utils/http.ts` | Shared HTTP helper (`parseOkJson`) — services throw on non-OK responses; specs assert business rules |
 
 API tests use Playwright's `request` fixture (no browser). Service classes live under `pageObjects/` and use relative paths with `baseURL` from the Playwright config.
 
 After a run, Petstore results are written to `e2e/technical2/output/`:
 
-| File                    | Contents                                                              |
-| ----------------------- | --------------------------------------------------------------------- |
-| `user.json`             | Retrieved user from create + GET                                      |
-| `sold-pets.json`        | Sold pets as `{id, name}` tuples                                      |
+| File | Contents |
+|------|----------|
+| `user.json` | Retrieved user from create + GET |
+| `sold-pets.json` | Sold pets as `{id, name}` tuples |
 | `shared-pet-names.json` | Names shared by more than one pet, e.g. `{"William": 11, "Floyd": 2}` |
 
 ---
 
 ## Prerequisites
 
-| Requirement                      | Needed for                      |
-| -------------------------------- | ------------------------------- |
-| **Node.js** 18+ (20 recommended) | All tests                       |
-| **npm**                          | Install dependencies            |
-| **Google Chrome**                | Local UI tests (`local-ui`)     |
-| Internet access                  | Google, Wikipedia, Petstore API |
+| Requirement | Needed for |
+|-------------|------------|
+| **Node.js** 18+ (20 recommended) | All tests |
+| **npm** | Install dependencies |
+| **Google Chrome** | Local UI tests (`local-ui`) |
+| Internet access | Google, Wikipedia, Petstore API |
 
 No `.env` file is required for local runs. Petstore settings read from `e2e/technical2/utils/constants.ts` with optional env overrides (see [Configuration reference](#configuration-reference)).
 
@@ -143,13 +143,10 @@ The test pauses automatically and the **Playwright Inspector** opens. You will s
 ### What to do
 
 1. Run the local suite:
-
    ```bash
    npm run test:local
    ```
-
    Or UI only:
-
    ```bash
    npx playwright test --project=local-ui
    ```
@@ -185,22 +182,22 @@ The test pauses automatically and the **Playwright Inspector** opens. You will s
 
 ### Recommended commands
 
-| Command                       | What it does                                                            |
-| ----------------------------- | ----------------------------------------------------------------------- |
-| `npm test`                    | Alias for `npm run test:local`                                          |
-| `npm run test:local`          | Full local run: **UI first**, then **API** (cleans Allure output first) |
-| `npm run test:local:parallel` | Local run with **UI and API in parallel** (one worker per suite)        |
-| `npm run test:google`         | Google UI only (`@google` tag, headed Chrome)                           |
-| `npm run test:ci`             | CI-style run: UI skipped, API only (cleans Allure output first)         |
-| `npm run test:ci:parallel`    | CI-style run with UI and API projects in parallel (UI still skipped)    |
-| `npm run typecheck`           | Static TypeScript check (`tsc --noEmit`)                                |
-| `npm run lint`                | ESLint (TypeScript + Playwright rules)                                  |
-| `npm run lint:fix`            | ESLint with auto-fix where possible                                     |
-| `npm run format`              | Prettier — format all tracked source files                              |
-| `npm run format:check`        | Prettier — verify formatting (CI)                                       |
-| `npm run report:html`         | Open Playwright HTML report from the last run                           |
-| `npm run report:allure`       | Generate static Allure HTML from `allure-results/`                      |
-| `npm run report:allure:serve` | Generate and open Allure report in one step                             |
+| Command | What it does |
+|---------|----------------|
+| `npm test` | Alias for `npm run test:local` |
+| `npm run test:local` | Full local run: **UI first**, then **API** (cleans Allure output first) |
+| `npm run test:local:parallel` | Local run with **UI and API in parallel** (one worker per suite) |
+| `npm run test:google` | Google UI only (`@google` tag, headed Chrome) |
+| `npm run test:ci` | CI-style run: UI skipped, API only (cleans Allure output first) |
+| `npm run test:ci:parallel` | CI API tests in parallel (`ci-api-1` → `ci-api-2`); `ci-ui` does not run |
+| `npm run typecheck` | Static TypeScript check (`tsc --noEmit`) |
+| `npm run lint` | ESLint (TypeScript + Playwright rules) |
+| `npm run lint:fix` | ESLint with auto-fix where possible |
+| `npm run format` | Prettier — format all tracked source files |
+| `npm run format:check` | Prettier — verify formatting (CI) |
+| `npm run report:html` | Open Playwright HTML report from the last run |
+| `npm run report:allure` | Generate static Allure HTML from `allure-results/` |
+| `npm run report:allure:serve` | Open Allure UI from raw `allure-results/` (no static HTML build) |
 
 ### Test execution order
 
@@ -211,13 +208,31 @@ local-ui  →  local-api
 ci-ui     →  ci-api   (UI skipped in CI)
 ```
 
-Running `npm run test:local` is equivalent to:
+`npm run test:local` runs the **full local suite**: **1 UI test** (`local-ui`) then **6 API tests** (`local-api`). The script cleans Allure output, then runs:
 
 ```bash
 npx playwright test --project=local-api
 ```
 
-Playwright automatically runs `local-ui` first because `local-api` depends on it. This mode uses **1 worker**.
+You only pass `--project=local-api`, but Playwright also runs `local-ui` first because `local-api` depends on it. Same full suite explicitly:
+
+```bash
+npx playwright test --project=local-ui --project=local-api
+```
+
+This mode uses **1 worker**.
+
+`npm run test:ci` runs **6 API tests** (`ci-api`). The script passes `--project=ci-api`; Playwright runs `ci-ui` first, but that project **skips** the Google test in CI:
+
+```bash
+npx playwright test --project=ci-api
+```
+
+API only, without the skipped UI project:
+
+```bash
+npx playwright test --project=ci-api --no-deps
+```
 
 **Optional (parallel suites):** set `PARALLEL_SUITES=true` to run `technical1` and `technical2` at the same time on **2 workers** — one worker per suite. Tests within a single suite still run **serially** (no parallel execution across multiple specs in `technical1` or `technical2`). If you add more spec files to one suite, they are chained as dependent projects (`local-ui-1` → `local-ui-2`, etc.) so order is preserved.
 
@@ -233,19 +248,19 @@ Parallel mode is **off by default**. Enable it via the env var or set `PARALLEL_
 
 Both modes run the **same 7 test cases** in 3 spec files (1 UI + 6 API locally; 6 API in CI with UI skipped). Verified commands:
 
-| Mode                 | Local                         | CI                         |
-| -------------------- | ----------------------------- | -------------------------- |
-| Sequential (default) | `npm run test:local`          | `npm run test:ci`          |
-| Parallel suites      | `npm run test:local:parallel` | `npm run test:ci:parallel` |
+| Mode | Local | CI |
+|------|-------|-----|
+| Sequential (default) | `npm run test:local` | `npm run test:ci` |
+| Parallel suites | `npm run test:local:parallel` | `npm run test:ci:parallel` |
 
 ### Projects
 
-| Project     | UI tests                             | API tests             | Browser    |
-| ----------- | ------------------------------------ | --------------------- | ---------- |
-| `local-ui`  | Yes (headed Chrome)                  | —                     | Headed     |
+| Project | UI tests | API tests | Browser |
+|---------|----------|-----------|---------|
+| `local-ui` | Yes (headed Chrome) | — | Headed |
 | `local-api` | — (runs after `local-ui` by default) | Yes (flow + negative) | No browser |
-| `ci-ui`     | Skipped                              | —                     | Headless   |
-| `ci-api`    | — (runs after `ci-ui`)               | Yes (flow + negative) | No browser |
+| `ci-ui` | Skipped | — | Headless |
+| `ci-api` | — (runs after `ci-ui`) | Yes (flow + negative) | No browser |
 
 With `PARALLEL_SUITES=true`, API specs split into `local-api-1` / `local-api-2` (and `ci-api-1` / `ci-api-2`) — one project per spec file, chained in order.
 
@@ -254,11 +269,14 @@ With `PARALLEL_SUITES=true`, API specs split into `local-api-1` / `local-api-2` 
 You can pass any [Playwright CLI argument](https://playwright.dev/docs/test-cli) after `--`:
 
 ```bash
-# UI only
+# UI only (1 test)
 npx playwright test --project=local-ui
 
-# API only (still triggers local-ui first due to dependency)
+# Full local suite — UI first, then API (7 tests); same as npm run test:local
 npx playwright test --project=local-api
+
+# API only, skip UI dependency (6 tests)
+npx playwright test --project=local-api --no-deps
 
 # Run a single spec file
 npx playwright test technical2/tests/petstoreFlow.spec.ts --project=ci-api
@@ -278,18 +296,14 @@ npx playwright test --list
 
 ### Environment variables
 
-| Variable               | Effect                                                                                            |
-| ---------------------- | ------------------------------------------------------------------------------------------------- |
-| `PARALLEL_SUITES=true` | Run `technical1` and `technical2` in parallel (2 workers, serial within each suite). Default: off |
-| `CI=true`              | Set automatically in most CI runners; can be used in custom logic if needed                       |
-
-| Variable                  | Default                          | Purpose                                              |
-| ------------------------- | -------------------------------- | ---------------------------------------------------- |
-| `PETSTORE_BASE_URL`       | `https://petstore.swagger.io/v2` | API host                                             |
-| `PETSTORE_API_KEY`        | `special-key`                    | Demo API key (Swagger Petstore documents this value) |
-| `PETSTORE_LOGIN_USER`     | `user1`                          | Login username                                       |
-| `PETSTORE_LOGIN_PASSWORD` | `pass`                           | Login password                                       |
-| `PARALLEL_SUITES`         | off                              | Run UI and API suites in parallel                    |
+| Variable | Default | Purpose |
+|----------|---------|---------|
+| `PARALLEL_SUITES` | off | Set to `true` to run `technical1` and `technical2` in parallel (2 workers, serial within each suite) |
+| `CI` | — | Set automatically in most CI runners; enables JUnit + GitHub reporters |
+| `PETSTORE_BASE_URL` | `https://petstore.swagger.io/v2` | API host |
+| `PETSTORE_API_KEY` | `special-key` | Demo API key (Swagger Petstore documents this value) |
+| `PETSTORE_LOGIN_USER` | `user1` | Login username |
+| `PETSTORE_LOGIN_PASSWORD` | `pass` | Login password |
 
 The demo Petstore does not enforce API-key auth on inventory — the `api_key` header is applied via Playwright project config for all API tests; negative tests use a plain context when no header is needed.
 
@@ -316,7 +330,7 @@ Opens `playwright-report/index.html` (generated automatically after every run). 
 ### Allure report
 
 ```bash
-# After a test run — generate and open in one step (recommended)
+# After a test run — open Allure UI from raw results (recommended)
 npm run report:allure:serve
 
 # Or generate static report, then open separately
@@ -324,19 +338,19 @@ npm run report:allure
 npm run report:allure:open
 ```
 
-| Output folder     | Contents                           |
-| ----------------- | ---------------------------------- |
-| `allure-results/` | Raw results (gitignored)           |
-| `allure-report/`  | Generated HTML report (gitignored) |
+| Output folder | Contents |
+|---------------|----------|
+| `allure-results/` | Raw results (gitignored) |
+| `allure-report/` | Generated HTML report (gitignored) |
 
 **Tip:** `npm run test:local` and `npm run test:ci` clean `allure-results` before each run so you do not see duplicate tests or false "retries" from old runs.
 
 For the Google UI test in Allure, open **local-ui** → the Wikipedia test → step **"Attach Wikipedia screenshot"** for the **viewport** PNG. The API flow test attaches `user.json`, `sold-pets.json`, and `shared-pet-names.json` under **local-api**.
 
-| Report          | UI screenshot                 | API attachments                                        |
-| --------------- | ----------------------------- | ------------------------------------------------------ |
-| Playwright HTML | Full-page PNG                 | —                                                      |
-| Allure          | Viewport PNG (Wikipedia step) | `user.json`, `sold-pets.json`, `shared-pet-names.json` |
+| Report | UI screenshot | API attachments |
+|--------|---------------|-----------------|
+| Playwright HTML | Full-page PNG | — |
+| Allure | Viewport PNG (Wikipedia step) | `user.json`, `sold-pets.json`, `shared-pet-names.json` |
 
 ---
 
@@ -344,56 +358,37 @@ For the Google UI test in Allure, open **local-ui** → the Wikipedia test → s
 
 The project is structured for pipeline adoption:
 
-| Feature                                      | Status                                              |
-| -------------------------------------------- | --------------------------------------------------- |
-| Separate `ci-ui` / `ci-api` projects         | Ready                                               |
-| UI tests auto-skipped in CI                  | Ready (`ci-*` projects)                             |
-| API tests run headless, no browser           | Ready                                               |
-| `retries: 0` (explicit, predictable runs)    | Configured                                          |
-| HTML + Allure reporters                      | Configured                                          |
-| `npm run test:ci` one-liner                  | Ready                                               |
-| Google session / auth folder gitignored      | Ready                                               |
-| Project dependencies (UI → API order)        | Configured (default sequential mode)                |
-| Optional parallel suites (`PARALLEL_SUITES`) | Configured (off by default)                         |
-| `npm run typecheck` in CI                    | Configured                                          |
-| ESLint + Prettier in CI                      | Configured (`npm run lint`, `npm run format:check`) |
-| JUnit + GitHub reporters in CI               | Configured (`test-results/junit.xml`)               |
-| `@google` tag for UI suite                   | Configured                                          |
-| User cleanup after API flow                  | `deleteUser` in `afterEach`                         |
-| Negative API spec                            | `petstoreNegative.spec.ts`                          |
+| Feature | Status |
+|---------|--------|
+| Separate `ci-ui` / `ci-api` projects | Ready |
+| UI tests auto-skipped in CI | Ready (`ci-*` projects) |
+| API tests run headless, no browser | Ready |
+| `retries: 0` (explicit, predictable runs) | Configured |
+| HTML + Allure reporters | Configured |
+| `npm run test:ci` one-liner | Ready |
+| Google session / auth folder gitignored | Ready |
+| Project dependencies (UI → API order) | Configured (default sequential mode) |
+| Optional parallel suites (`PARALLEL_SUITES`) | Configured (off by default) |
+| `npm run typecheck` in CI | Configured |
+| ESLint + Prettier in CI | Configured (`npm run lint`, `npm run format:check`) |
+| JUnit + GitHub reporters in CI | Configured (`test-results/junit.xml`) |
+| `@google` tag for UI suite | Configured |
+| User cleanup after API flow | `deleteUser` in `afterEach` |
+| Negative API spec | `petstoreNegative.spec.ts` |
 
-### Suggested CI pipeline steps
+### CI pipeline
 
-```yaml
-# Example (GitHub Actions style)
-- uses: actions/setup-node@v4
-  with:
-    node-version: '20'
+The repo ships a working workflow at `.github/workflows/playwright.yml`:
 
-- run: npm ci
-- run: npm run typecheck
-- run: npm run lint
-- run: npm run format:check
-- run:
-    npx playwright install --with-deps chromium # API-only CI needs no Chrome;
-    # add if you later run UI in CI
+1. `npm ci`
+2. `npm run typecheck`
+3. `npm run lint`
+4. `npm run format:check`
+5. `npm run test:ci` (with `CI=true`)
+6. `npm run report:allure`
+7. Upload `test-results/junit.xml`, `playwright-report/`, and `allure-report/`
 
-- run: npm run test:ci
-
-- run: npm run report:allure
-  if: always()
-
-# Upload artifacts
-- uses: actions/upload-artifact@v4
-  with:
-    name: playwright-report
-    path: playwright-report/
-
-- uses: actions/upload-artifact@v4
-  with:
-    name: allure-report
-    path: allure-report/
-```
+No `npx playwright install` is required for the current API-only CI gate. Add browser install if you later run `@google` tests in the pipeline.
 
 ### Optional CI enhancements (not yet implemented)
 
@@ -431,30 +426,31 @@ Main settings live in `playwright.config.ts`:
 
 ## Repository files
 
-| File / folder                      | Purpose                                                       |
-| ---------------------------------- | ------------------------------------------------------------- |
-| `playwright.config.ts`             | Projects, reporters, timeouts                                 |
-| `tsconfig.json`                    | TypeScript settings for IDE support                           |
-| `eslint.config.mjs`                | ESLint flat config (TypeScript + Playwright)                  |
-| `.prettierrc.json`                 | Prettier formatting rules                                     |
-| `package.json`                     | Dependencies and npm scripts                                  |
-| `.gitignore`                       | Ignores reports, test results, session cookies                |
-| `.github/workflows/playwright.yml` | CI pipeline (`npm run test:ci`)                               |
-| `playwright/.auth/`                | Google session storage (folder tracked, session file ignored) |
-| `e2e/`                             | All tests, page objects, and utilities                        |
+| File / folder | Purpose |
+|---------------|---------|
+| `playwright.config.ts` | Projects, reporters, timeouts |
+| `tsconfig.json` | TypeScript settings for IDE support |
+| `eslint.config.mjs` | ESLint flat config (TypeScript + Playwright) |
+| `.prettierrc.json` | Prettier formatting rules |
+| `package.json` | Dependencies and npm scripts |
+| `.gitignore` | Ignores reports, test results, session cookies |
+| `.github/workflows/playwright.yml` | CI pipeline (typecheck, lint, format, `test:ci`, reports) |
+| `.prettierignore` | Paths excluded from Prettier |
+| `playwright/.auth/` | Google session storage (folder tracked, session file ignored) |
+| `e2e/` | All tests, page objects, and utilities |
 
 ---
 
 ## Troubleshooting
 
-| Problem                                         | Solution                                                                                                                                |
-| ----------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------- |
-| `Project(s) "local" not found`                  | Use `--project=local-api` or `npm run test:local`                                                                                       |
-| Test paused on Google                           | Solve CAPTCHA in the browser, then click **Resume** in Playwright Inspector — see [Resolving Google CAPTCHA](#resolving-google-captcha) |
-| Google CAPTCHA on every run                     | Delete `playwright/.auth/google-session.json` and run `--project=local-ui` again to create a fresh session                              |
-| Empty Allure attachments                        | Open the **Google UI** test under `local-ui`, not the API test; check step **"Attach Wikipedia screenshot"**                            |
-| Duplicate tests in Allure                       | Use `npm run test:local` / `test:ci` (they clean `allure-results` first)                                                                |
-| `ENOENT` for `google-session.json` on first run | Normal — the file is created after the first successful Google visit with CAPTCHA resolved                                              |
+| Problem | Solution |
+|---------|----------|
+| `Project(s) "local" not found` | Use `npm run test:local` (UI + API) or `--project=local-ui` / `--project=local-api` |
+| Test paused on Google | Solve CAPTCHA in the browser, then click **Resume** in Playwright Inspector — see [Resolving Google CAPTCHA](#resolving-google-captcha) |
+| Google CAPTCHA on every run | Delete `playwright/.auth/google-session.json` and run `--project=local-ui` again to create a fresh session |
+| Empty Allure attachments | Open the **Google UI** test under `local-ui`, not the API test; check step **"Attach Wikipedia screenshot"** |
+| Duplicate tests in Allure | Use `npm run test:local` / `test:ci` (they clean `allure-results` first) |
+| `ENOENT` for `google-session.json` on first run | Normal — the file is created after the first successful Google visit with CAPTCHA resolved |
 
 ---
 
